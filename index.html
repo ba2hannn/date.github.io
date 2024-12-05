@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahve Zamanı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #6b4e37;
+            font-size: 2.5rem;
+            margin: 10px;
+        }
+        img {
+            max-width: 30%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        #yes {
+            background-color: #6b4e37;
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            animation: bounce 1s infinite;
+        }
+        #no {
+            background-color: #e74c3c;
+            color: white;
+            width: 100px;
+            height: 50px;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        #modal p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        #modal button {
+            background-color: #6b4e37;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes steam {
+            0% { transform: translateY(0) translateX(-50%); opacity: 0.4; }
+            50% { transform: translateY(-10px) translateX(-30%); opacity: 0.2; }
+            100% { transform: translateY(-20px) translateX(-50%); opacity: 0; }
+        }
+
+        .coffee-steam {
+            position: relative;
+        }
+
+        .coffee-steam::before {
+            content: "~";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            font-size: 2em;
+            color: #6b4e37;
+            animation: steam 2s infinite;
+        }
+
+        #yes {
+            background-color: #6b4e37;
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes emojiRain {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        .emoji {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            animation: emojiRain 3s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kahve içmek ister misin?</h1>
+    <img src="https://st.depositphotos.com/1020804/1263/i/950/depositphotos_12639245-stock-photo-coffee-cup-and-saucer-on.jpg" alt="Kahve Fotoğrafı">
+    <div class="buttons">
+        <button id="yes">Evet</button>
+        <button id="no">Hayır</button>
+    </div>
+
+    <div id="modal">
+        <p id="modalText">Instagram: @batuhann_akcan</p>
+        <button id="closeModal">Tamam</button>
+    </div>
+
+    <script>
+        const noButton = document.getElementById('no');
+        const yesButton = document.getElementById('yes');
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementById('closeModal');
+        const modalText = document.getElementById('modalText');
+        let escapeCount = 0;
+        let confirmCount = 0;
+        let deniedChances = false;
+        let clickCount = 0;
+
+        noButton.addEventListener('mouseenter', () => {
+            if (escapeCount < 7) {
+                const x = Math.random() * (window.innerWidth - noButton.offsetWidth);
+                const y = Math.random() * (window.innerHeight - noButton.offsetHeight);
+                noButton.style.position = 'absolute';
+                noButton.style.left = `${x}px`;
+                noButton.style.top = `${y}px`;
+                escapeCount++;
+            }
+        });
+
+        noButton.addEventListener('click', () => {
+            if (escapeCount >= 1 && confirmCount < 5) {
+                const messages = [
+                    "Emin misin? 🥺",
+                    "Son kararın mı? ☕ Pasta da ısmarlarım!",
+                    "Pişman olacaksın! 😢 Bak çok eğlenceli olacak!",
+                    "Hayır seçeneğini kabul etmiyorum! 😤 Hadi ama!",
+                    "Son şansın! Kahve + tatlı + muhteşem sohbet! 🙏"
+                ];
+                document.body.classList.add('shake');
+                setTimeout(() => {
+                    document.body.classList.remove('shake');
+                }, 500);
+                alert(messages[confirmCount]);
+                confirmCount++;
+            } else if (confirmCount >= 5) {
+                alert("Madem bu kadar ısrar ediyorsun, hayır seçeneğini kaldırıyorum 😈");
+                noButton.style.display = 'none';
+                deniedChances = true;
+            }
+        });
+
+        yesButton.addEventListener('click', () => {
+            const emojis = ['☕', '🍰', '🎉', '💖', '✨'];
+            for (let i = 0; i < 20; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji';
+                emoji.style.left = Math.random() * 100 + 'vw';
+                emoji.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                document.body.appendChild(emoji);
+                setTimeout(() => emoji.remove(), 3000);
+            }
+
+            if (deniedChances) {
+                modalText.textContent = "Çok zorladım istemiyorsan hayır diyebilirsin 😊";
+            } else {
+                modalText.textContent = "Harika! 🎉 Kahve date hakkı kazandın! ☕";
+            }
+            modal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            window.location.href = 'https://instagram.com/batuhann_akcan';
+        });
+
+        yesButton.addEventListener('mouseenter', () => {
+            yesButton.classList.add('coffee-steam');
+        });
+
+        yesButton.addEventListener('mouseleave', () => {
+            yesButton.classList.remove('coffee-steam');
+        });
+
+        const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konami[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konami.length) {
+                    alert('Gizli kodu buldun! 🎉 Kahve benden olsun! 😊');
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+    </script>
+</body>
+</html>
